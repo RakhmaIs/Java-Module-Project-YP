@@ -5,8 +5,10 @@ import java.util.InputMismatchException;
 import java.util.Objects;
 import java.util.Scanner;
 
+import app.Main;
 import model.Product;
 import util.MyFormatter;
+
 
 public class Calculator {
     private ArrayList<Product> products = new ArrayList<>();
@@ -29,6 +31,7 @@ public class Calculator {
         this.products = products;
     }
 
+
     public void startDevideCalculator() {
         String strInput;
         System.out.println("Введите кол-во людей на которых необходимо разделить счёт. " +
@@ -50,13 +53,16 @@ public class Calculator {
     }
 
     public void showAllPriceAndProducts() {
-
-        System.out.println("Все добавленные блюда и цены на данный момент:");
-        products.stream()
-                .map(product -> product.getProductName() + " = " + product.getPrice())
-                .forEach(System.out::println);
-
+        if (!products.isEmpty()) {
+            System.out.println("Все добавленные блюда и цены на данный момент:");
+            for (Product product : products) {
+                System.out.println(product.getProductName() + " = " + product.getPrice());
+            }
+        } else {
+            System.out.println("На данный момент добавленных блюд - нет.");
+        }
     }
+
 
     public void addProduct() {
         String productName = "product";
@@ -82,7 +88,7 @@ public class Calculator {
 
             }
 
-            if (price > 0 && !productName.isEmpty() && !checkProductName(productName)) {
+            if (price > 0 && !productName.isEmpty() && !isProductNameHasAnyDigits(productName)) {
                 Product newProduct = new Product(productName, price);
                 sum += price;
                 products.add(newProduct);
@@ -92,7 +98,7 @@ public class Calculator {
                         " \"" + price + "\" - успешно добавлено." + "\u001B[0m");
 
                 System.out.printf("\u001B[32m" + "Каждый человек должен заплатить по: %.2f %s" + "\u001B[0m"
-                        ,calculate(), MyFormatter.responseFormat(calculate()));
+                        , calculate(), MyFormatter.responseFormat(calculate()));
 
             } else {
                 System.err.println("Блюдо не добавлено. \nПроверьте данные:\n" +
@@ -104,41 +110,49 @@ public class Calculator {
         } while (whileContinue);
     }
 
+    public void stopDevideCalculator() {
+        String exit = "";
+        System.out.println("Введите \"завершить\" для подтверждения");
+        exit = scanner.next();
+        if (exit.equalsIgnoreCase("завершить")) {
+            scanner.close();
+            stopRunning();
+        } else {
+            System.err.println("Для выхода выберите пункт меню - " +
+                    "\"2.Выйти\" - затем для подтверждения введите - \"завершить\".");
+        }
+    }
+
+    public static void stopRunning() {
+        Main.appClose = true;
+    }
+
     private double calculate() {
-        return sum/peopleCount;
+        return sum / peopleCount;
+    }
+
+    private boolean isProductNameHasAnyDigits(String productName) {
+        return productName.trim().chars().anyMatch(Character::isDigit);
     }
 
     private boolean addAnotherOneOrNot() {
         System.out.println("\n1. Добавить еще одно блюддо.\n2. Выход. ");
         String choice = scanner.next();
 
-        if (choice.equals("1")) {
-            return true;
-        } else if (choice.equals("2")) {
-            showAllPriceAndProducts();
-            return stopDevideCalculator();
-        } else {
-            System.err.println("Выберите пункт меню и введите: 1 или 2");
-            return false;
+        switch (choice) {
+            case "1" -> {
+                return true;
+            }
+            case "2" -> {
+                showAllPriceAndProducts();
+                stopDevideCalculator();
+                return false;
+            }
+            default -> {
+                System.err.println("Выберите пункт меню и введите: 1 или 2");
+                return false;
+            }
         }
-    }
-
-
-    private boolean checkProductName(String productName) {
-        return productName.trim().chars().anyMatch(Character::isDigit);
-    }
-
-
-    public boolean stopDevideCalculator() {
-        String exit = "";
-        System.out.println("Введите 'завершить' для подтверждения");
-        exit = scanner.next();
-        if (!exit.equalsIgnoreCase("завершить")) {
-            System.err.println("Для выхода выберите пункт меню - " +
-                    "\"2.Выйти\" - затем для подтверждения введите - \"завершить\".");
-            return false;
-        }
-        return true;
     }
 
 
