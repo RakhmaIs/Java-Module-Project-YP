@@ -92,13 +92,14 @@ public class Calculator {
                 Product newProduct = new Product(productName, price);
                 sum += price;
                 products.add(newProduct);
-                showAllPriceAndProducts();
 
                 System.out.println("\u001B[32m" + "Блюдо: \"" + productName + "\" по цене:" +
                         " \"" + price + "\" - успешно добавлено." + "\u001B[0m");
 
-                System.out.printf("\u001B[32m" + "Каждый человек должен заплатить по: %.2f %s" + "\u001B[0m"
-                        , calculate(), MyFormatter.responseFormat(calculate()));
+                showAllPriceAndProducts();
+
+                System.out.printf("\u001B[32m" + "Каждый человек должен заплатить по: %s" + "\u001B[0m"
+                        , MyFormatter.formatPayment(calculate()));
 
             } else {
                 System.err.println("Блюдо не добавлено. \nПроверьте данные:\n" +
@@ -116,6 +117,7 @@ public class Calculator {
         exit = scanner.next();
         if (exit.equalsIgnoreCase("завершить")) {
             scanner.close();
+            showAllPriceAndProducts();
             stopRunning();
         } else {
             System.err.println("Для выхода выберите пункт меню - " +
@@ -144,7 +146,6 @@ public class Calculator {
                 return true;
             }
             case "2" -> {
-                showAllPriceAndProducts();
                 stopDevideCalculator();
                 return false;
             }

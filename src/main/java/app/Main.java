@@ -19,7 +19,6 @@ public class Main {
             switch (command) {
                 case "1" -> calculator.startDevideCalculator();
                 case "2" -> {
-                    calculator.showAllPriceAndProducts();
                     calculator.stopDevideCalculator();
                 }
                 default -> System.err.println("Выберите пункт меню - введите: 1 или 2");
